@@ -55,7 +55,7 @@ echo https://$(oc get cm management-ingress-ibmcloud-cluster-info -o jsonpath='{
 ```
 oc get secrets -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 --decode && echo
 ```
-3. Access the IEAM Dashboard from a browser using the admin credentails.
+3. Access the IEAM Dashboard from a browser using the admin credentials.  From the hamburger button, select Administer > Identity and Access.
 ![IBM Cloud Pak Administration Hub](../static/imgs/ibm-cloud-pak-admin-hub.png)
 4. Determine the IP address of the `openldap-xxxxxxxxxx-xxxxx` pod.
 ```
@@ -75,30 +75,21 @@ Group ID map: *:cn
 User ID map: *:uid
 Group member ID map: groupOfUniqueNames:uniqueMember
 ```
+![OpenLDAP Connection](../static/imgs/ldap-connection.png)
 An `OpenLDAP` instance should now be listed on the `Authentication` tab.  
-7. Add the `edgeusers` and `edgeadmins` groups.  Select the `Teams` tab and click `Create team` and create an entry for each of the following groups.  
+7. Create a team called `edgeadmins`, add the `adminX` users and click `Create`.
 ```
-# Edge Admins Group
 Team Name: edgeadmins
 Domain: OpenLDAP
-Search for "edge" and select the "edgeusers" group with DN = cn=edgeusers,ou=Groups,dc=tsa,dc=edge,dc=demo,dc=c...
-Role: Administrator
-
-# Edge Users Group
+Select Users option and search for "admin".  Select the "admin1" and "admin2" users and assign the "Administrator" role.
+```
+![Create edgeadmins group](../static/imgs/ieam-edgeadmins-team.png)
+8. Create a team called `edgeusers`, add the `userX1` users and click `Create`.
+```
 Team Name: edgeusers
 Domain: OpenLDAP
-Search for "edge" and select the "edgeusers" group with DN = cn=edgeadmin,ou=Groups,dc=tsa,dc=edge,dc=demo,dc=c...
-Role: Editor
+Select Users option and search for "user".  Select "user1" - "user4" users and assign the "Editor" role.
 ```
-8. Add users to the `edgeadmins` Team and select the `Users` tab.
-```
-Domain: OpenLDAP
-Search for "admin", select "admin1" and "admin2" and click Add.
-```
-9. Add users to the `edgeusers` Team.
-```
-Domain: OpenLDAP
-Serch for "user", select "user1" - "user4" with "Editor" role and click Add.
-```
-10. Log out and change the authentication type to "Enterprise LDAP".  
-11. Log in with `admin1` / `edgeadmin`.
+![Create edgusers group](../static/imgs/ieam-edgeusers-team.png)
+9. Log in to the IEAM Management Console with `admin1` / `edgeadmin` to verify the OpenLDAP integration.
+![IEAM OpenLDAP authentication](../static/imgs/ieam-openldap-authenticaiton.png)

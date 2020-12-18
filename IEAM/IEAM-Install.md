@@ -55,7 +55,7 @@ spec:
 
 # Create Secret for Entitlement Key
 1. From the OpenShift Console, select Home > Projects.  Create a new project called `ibm-edge`
-2. Create a secret containing the IBM Entitlement Key to authenticate and pull images from the IBM Entitled Registry.  Paste the Entitlement Key into the `Password` parameter.
+2. Create a secret containing the IBM Entitlement Key to authenticate and pull images from the IBM Entitled Registry.  Paste the Entitlement Key into the `Password` parameter. 
 ![IBM Entitlement Key pull image secret](../IEAM/static/imgs/secret-ibm-entitlemnt-key.png)
 
 

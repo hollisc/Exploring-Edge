@@ -106,7 +106,7 @@ data:
     # Create Edge admin group
     dn: cn=edgeadmin,ou=Groups,dc=tsa,dc=edge,dc=demo,dc=com
     changetype: add
-    cn: edgeusers
+    cn: edgeadmins
     objectclass: groupOfUniqueNames
     objectclass: top
     owner: cn=admin,dc=tsa,dc=edge,dc=demo,dc=com
