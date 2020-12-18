@@ -4,8 +4,14 @@
 
 
 ## Table of Content
+- [Pre-requisites](#pre-requisites)
 - [Configure and deploy OpenLDAP and phpLDAPadmin](#configure-and-deploy-openldap-and-phpldapadmin)
 - [Configure IEAM Hub](#configure-ieam-hub)
+
+
+# Pre-requisites:
+The instructions below assumes that the following conditions have been met.  
+- An instance of OpenShift 4.5 has been provisioned.
 
 
 ## Configure and deploy OpenLDAP and phpLDAPadmin on OpenShift
