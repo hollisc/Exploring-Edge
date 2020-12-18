@@ -56,16 +56,16 @@ spec:
 # Create Secret for Entitlement Key
 1. From the OpenShift Console, select Home > Projects.  Create a new project called `ibm-edge`
 2. Create a secret containing the IBM Entitlement Key to authenticate and pull images from the IBM Entitled Registry.  Paste the Entitlement Key into the `Password` parameter.
-![IBM Entitlement Key pull image secret](../static/imgs/secret-ibm-entitlemnt-key.png)
+![IBM Entitlement Key pull image secret](../IEAM/static/imgs/secret-ibm-entitlemnt-key.png)
 
 
 # Install IEAM
 1. From the OpenShift Console, select Operators > OperatorHub and search for `IEAM Management Hub` and click `Install`.
 2. Ensure the `Installed Namespace` parameter is set to `ibm-edge` and click `Install`.
 3. Wait for the `IBM Cloud Platform Common Services` and `IEAM Management Hub` operators to show up and in a `Succeeded` status.
-![IEAM Operator install](../static/imgs/ieam-operator-install.png)
+![IEAM Operator install](../IEAM/static/imgs/ieam-operator-install.png)
 4. A new project `ibm-common-services` should have been created.  Switch to this project and select the `Common Service` link under the column `Provided APIs`.  
-![IBM Common Platform Common Services operator](../static/imgs/ibm-common-platform-common-services-operator.png)
+![IBM Common Platform Common Services operator](../IEAM/static/imgs/ibm-common-platform-common-services-operator.png)
 5. Select the `common-service` custom resource, browse to the `YAML` tab and replace `spec:` field with the following yaml snippet.  Click `Save`.
 ```
 spec:
@@ -93,7 +93,7 @@ spec:
 ```
 6. Switch back to the `ibm-edge` project, browse to `Operators > Installed Operators` and select `EamHub` link under the column `Provided APIs`.
 7. Click the `Create EamHub` button and ensure `Accept LIcense` is set to `True`.  Click `Create`.
-![Create IEAM Hub instance](../static/imgs/create-ieam-hub.png)
+![Create IEAM Hub instance](../IEAM/static/imgs/create-ieam-hub.png)
 8. The operator will deploy the required workloads to create the IEAM Hub.  
 
 

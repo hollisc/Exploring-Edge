@@ -79,4 +79,4 @@ echo https://$(oc get cm management-ingress-ibmcloud-cluster-info -o jsonpath='{
 oc get secrets -n ibm-common-services platform-auth-idp-credentials -o jsonpath='{.data.admin_password}' | base64 --decode && echo
 ```
 6. Log in to the IEAM Management Portal with the `admin` credentials.
-![IEAM Management Console](../static/imgs/ieam-management-console.png)
+![IEAM Management Console](../IEAM/static/imgs/ieam-management-console.png)
