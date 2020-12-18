@@ -1,0 +1,228 @@
+---
+# Source: icp-openldap/templates/openldap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openldap-seedusers
+data:
+  seedusers.ldif: |    # Add Group OU
+    dn: ou=Groups,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: organizationalUnit
+    ou: Groups
+
+    # Add People OU
+    dn: ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: organizationalUnit
+    ou: People
+
+    # Add users
+    dn: uid=user1,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: user1
+    displayname: user1
+    sn: user1
+    cn: user1
+    userpassword: edgeuser
+
+    dn: uid=user2,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: user2
+    displayname: user2
+    sn: user2
+    cn: user2
+    userpassword: edgeuser
+
+    dn: uid=user3,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: user3
+    displayname: user3
+    sn: user3
+    cn: user3
+    userpassword: edgeuser
+
+    dn: uid=user4,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: user4
+    displayname: user4
+    sn: user4
+    cn: user4
+    userpassword: edgeuser
+
+    # Add admins
+    dn: uid=admin1,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: admin1
+    displayname: admin1
+    sn: admin1
+    cn: admin1
+    userpassword: edgeadmin
+
+    dn: uid=admin2,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    objectclass: inetOrgPerson
+    objectclass: organizationalPerson
+    objectclass: person
+    objectclass: top
+    uid: admin2
+    displayname: admin2
+    sn: admin2
+    cn: admin2
+    userpassword: edgeadmin
+
+    # Create Edge user group
+    dn: cn=edgeusers,ou=Groups,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    cn: edgeusers
+    objectclass: groupOfUniqueNames
+    objectclass: top
+    owner: cn=admin,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=user1,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=user2,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=user3,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=user4,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+
+    # Create Edge admin group
+    dn: cn=edgeadmin,ou=Groups,dc=tsa,dc=edge,dc=demo,dc=com
+    changetype: add
+    cn: edgeusers
+    objectclass: groupOfUniqueNames
+    objectclass: top
+    owner: cn=admin,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=admin1,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+    uniquemember: uid=admin2,ou=People,dc=tsa,dc=edge,dc=demo,dc=com
+---
+# Source: icp-openldap/templates/openldap.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: openldap
+  name: openldap
+spec:
+  ports:
+    - port: 389
+  selector:
+    app: openldap
+---
+# Source: icp-openldap/templates/phpldapadmin.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: openldap-admin
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 31080
+  selector:
+    app: openldap-admin
+---
+# Source: icp-openldap/templates/openldap.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap
+  labels:
+    app: openldap
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap
+  template:
+    metadata:
+      labels:
+        app: openldap
+    spec:
+      initContainers:
+        - name: init-copy
+          image: docker.io/busybox:latest
+          imagePullPolicy: Always
+          command: ['sh','-c','cp /config-map/* /config-storage; ls -lrt /config-storage']
+          volumeMounts:
+          - name: openldap-seedusers
+            mountPath: /config-map
+          - name: config-storage
+            mountPath: /config-storage
+      containers:
+        - name: openldap
+          image: docker.io/osixia/openldap:latest
+          imagePullPolicy: Always
+          args: ["--loglevel", "debug"]
+          volumeMounts:
+            - name: config-storage
+              mountPath: /container/service/slapd/assets/config/bootstrap/ldif/custom
+            - name: ldap-certs
+              mountPath: /container/service/slapd/assets/certs
+          ports:
+            - containerPort: 389
+            - containerPort: 636
+          env:
+            - name: LDAP_LOG_LEVEL
+              value: "256"
+            - name: LDAP_ORGANISATION
+              value: "Example Inc."
+            - name: LDAP_DOMAIN
+              value: "tsa.edge.demo.com"
+            - name: LDAP_ADMIN_PASSWORD
+              value: "edgeadmin"
+            - name: LDAP_REMOVE_CONFIG_AFTER_SETUP
+              value: "false"
+      volumes:
+        - name: config-storage
+          emptyDir: {}
+        - name: ldap-certs
+          emptyDir: {}
+        - name: openldap-seedusers
+          configMap:
+            name: openldap-seedusers
+---
+# Source: icp-openldap/templates/phpldapadmin.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openldap-admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openldap-admin
+  template:
+    metadata:
+      labels:
+        app: openldap-admin
+    spec:
+      containers:
+      - name: openldap-admin
+        image: docker.io/osixia/phpldapadmin:latest
+        imagePullPolicy: Always
+        ports:
+          - containerPort: 80
+        env:
+        - name: PHPLDAPADMIN_HTTPS
+          value: "false"
+        - name: PHPLDAPADMIN_LDAP_HOSTS
+          value: "openldap"
