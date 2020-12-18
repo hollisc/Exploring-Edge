@@ -4,5 +4,6 @@
 
 ## Table of Contents
 - [Install IEAM 4.2](../IEAM/IEAM-Install.md)
+- [IEAM 4.2 Post-Install Configuration](../IEAM/IEAM-Post-Install-Config.md)
 - [Configure OpenLDAP](../IEAM/OpenLDAP/OpenLDAP.md)
 - [Configure Multi-tenancy](IEAM-Multi-tenancy.md)
