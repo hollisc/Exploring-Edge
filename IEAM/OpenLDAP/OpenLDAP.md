@@ -2,9 +2,11 @@
 
 **Description**: This guide will deploy OpenLDAP and configure OpenLDAP as an identity provider for IBM Edge Application Manager Hub.
 
+
 ## Table of Content
 - [Configure and deploy OpenLDAP and phpLDAPadmin](#configure-and-deploy-openldap-and-phpldapadmin)
 - [Configure IEAM Hub](#configure-ieam-hub)
+
 
 ## Configure and deploy OpenLDAP and phpLDAPadmin on OpenShift
 1. The [openldap-helm-template.yaml](../openldap-helm-template.yaml) was generated from a Helm Chart and is set up to create two groups (`edgeusers` and `edgeadmins`).  Additionally, `user1 - user4` will be created as users in the `edgeusers` group and `admin1 - admin2` will be created as users in the `edgeadmins` group.  
@@ -92,3 +94,5 @@ Search for "admin", select "admin1" and "admin2" and click Add.
 Domain: OpenLDAP
 Serch for "user", select "user1" - "user4" with "Editor" role and click Add.
 ```
+10. Log out and change the authentication type to "Enterprise LDAP".  
+11. Log in with `admin1` / `edgeadmin`.
